@@ -3,3 +3,6 @@ __pycache__
 *.tar.gz
 *pb2*.py
 model
+*.zip
+websocket/vosk-model-fa-0.5
+websocket/vosk-model-small-fa-0.5
