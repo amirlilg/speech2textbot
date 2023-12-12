@@ -5,4 +5,4 @@ __pycache__
 model
 *.zip
 *.m4a
-vosk-server/models/*
+vosk-server/models/vosk-*
