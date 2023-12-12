@@ -4,3 +4,5 @@ __pycache__
 *pb2*.py
 model
 *.zip
+*.m4a
+vosk-server/models/*
