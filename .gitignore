@@ -6,3 +6,5 @@ model
 *.zip
 *.m4a
 vosk-server/models/vosk-*
+vosk-server/khodet_bash_dokhtar_test/01.wav
+vosk-server/khodet_bash_dokhtar_test/01_transcription.txt
