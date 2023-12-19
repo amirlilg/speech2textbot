@@ -1,30 +1,90 @@
-from telegram.ext import Updater, MessageHandler, Filters
+#!/usr/bin/env python
+# pylint: disable=unused-argument
+# This program is dedicated to the public domain under the CC0 license.
 
-def handle_voice_message(update, context):
-    voice = update.message.voice
-    file_id = voice.file_id
-    file = context.bot.get_file(file_id)
-    file.download('path/to/save/voice_message.ogg')
+"""
+Simple Bot to reply to Telegram messages.
 
-    # Now you can pass the file path to your speech recognition code
-    transcription = your_speech_recognition_function('path/to/save/voice_message.ogg')
+First, a few handler functions are defined. Then, those functions are passed to
+the Application and registered at their respective places.
+Then, the bot is started and runs until we press Ctrl-C on the command line.
 
-    update.message.reply_text(f'Transcription: {transcription}')
+Usage:
+Basic Echobot example, repeats messages.
+Press Ctrl-C on the command line or send a signal to the process to stop the
+bot.
+"""
 
-def main():
-    # Replace 'YOUR_BOT_TOKEN' with the token you obtained from the BotFather
-    updater = Updater('6908193109:AAExsZweXsz6na97PgUAXMt5ZHD_oTta3Jc', use_context=True)
+import logging
 
-    dp = updater.dispatcher
+from telegram import ForceReply, Update
+from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 
-    # Handle voice messages
-    dp.add_handler(MessageHandler(Filters.voice, handle_voice_message))
+# Enable logging
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+)
+# set higher logging level for httpx to avoid all GET and POST requests being logged
+logging.getLogger("httpx").setLevel(logging.WARNING)
 
-    # Start the Bot
-    updater.start_polling()
+logger = logging.getLogger(__name__)
 
-    # Run the bot until you send a signal to stop it
-    updater.idle()
+async def handle_audio(update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    audio: Audio = update.message.audio
 
-if __name__ == '__main__':
+    if audio:
+        file_id = audio.file_id
+        duration = audio.duration
+        performer = audio.performer
+        title = audio.title
+
+        update.message.reply_text(
+            f"Audio File ID: {file_id}\nDuration: {duration} seconds\nPerformer: {performer}\nTitle: {title}"
+        )
+    else:
+        update.message.reply_text("Please send an audio file.")
+
+
+# Define a few command handlers. These usually take the two arguments update and
+# context.
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Send a message when the command /start is issued."""
+    user = update.effective_user
+    await update.message.reply_html(
+        rf"Hi {user.mention_html()}!",
+        reply_markup=ForceReply(selective=True),
+    )
+
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Send a message when the command /help is issued."""
+    await update.message.reply_text("Help!")
+
+
+async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Echo the user message."""
+    await update.message.reply_text(update.message.text)
+
+#dp.add_handler(MessageHandler(Filters.audio, handle_audio))
+
+
+def main() -> None:
+    """Start the bot."""
+    # Create the Application and pass it your bot's token.
+    application = Application.builder().token("BOT_TOKEN").build()
+
+    # on different commands - answer in Telegram
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("help", help_command))
+
+    # on non command i.e message - echo the message on Telegram
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
+
+    application.add_handler(MessageHandler(filters.AUDIO, handle_audio))
+
+
+    # Run the bot until the user presses Ctrl-C
+    application.run_polling(allowed_updates=Update.ALL_TYPES)
+
+
+if __name__ == "__main__":
     main()
