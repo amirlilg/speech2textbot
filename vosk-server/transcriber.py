@@ -3,9 +3,22 @@ import converter
 import asyncio
 import sys
 
-converter.convert(sys.argv[1])
+# prerequisites : audio_sample_rate = 16000, channels = 1, file_format = wav
+
+# def is_audio_ok(filename):
+#     info = mediainfo(filename)
+#     channels = info['channels']
+#     sample_rate = info['sample_rate']
+
+#     return channels == 1 and sample_rate == 16000 and filename.split(".")[-1] == "wav"
+
+# output = ""
+
+output = asyncio.run(test_srt.run_test_with_file('ws://localhost:2700', sys.argv[1]))
+
+
+# converter.convert(sys.argv[1])
 format_ = sys.argv[1].split(".")[-1]
-output = asyncio.run(test_srt.run_test_with_file('ws://localhost:2700', sys.argv[1][:-(len(format_))] + "wav"))
 
 transcription = ""
 for line in output.split("\n"):

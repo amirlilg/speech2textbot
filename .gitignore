@@ -10,4 +10,5 @@ vosk-server/models/vosk-*
 vosk-server/khodet_bash_dokhtar_test/01*
 vosk-server/karb*
 bottoken.txt
+user-audio/*
 
