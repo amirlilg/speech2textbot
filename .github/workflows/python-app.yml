@@ -28,7 +28,7 @@ jobs:
 
       - name: Run ASR Server
         run: |
-          python asr_server.py &
+          python vosk-server/websocket/asr_server.py &
           echo "ASR Server is running in the background."
 
       - name: Wait for ASR Server
