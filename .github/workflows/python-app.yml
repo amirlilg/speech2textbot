@@ -28,9 +28,9 @@ jobs:
 
       - name: Download and Unzip Model
         run: |
-          wget -O vosk-server/models/model.zip https://alphacephei.com/vosk/models/vosk-model-small-fa-0.5.zip
-          unzip vosk-server/models/model.zip -d vosk-server/models
-          # mv vosk-server/models/vosk-model-small-fa-0.5/ vosk-server/models/vosk-model-fa-0.5/
+          cd vosk-server/websocket/models/
+          wget https://alphacephei.com/vosk/models/vosk-model-small-fa-0.5.zip
+          unzip vosk-server/models/model.zip
 
       - name: Run ASR Server
         run: |
