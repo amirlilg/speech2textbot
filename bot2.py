@@ -41,8 +41,19 @@ def handle_audio(message):
     file_id = audio.file_id
     file_info = bot.get_file(file_id)
 
+    # Log info of file
+    logger.info("Received audio file:")
+    logger.info(f" * File ID: {file_id}")
+    logger.info(f" * duration: {duration} seconds")
+
+    # Create a dedicated directory for each user or use the existing one
+    user_directory = os.path.join("user-audio", str(message.from_user.id))
+    
+    if not os.path.exists(user_directory):
+        os.makedirs(user_directory)
+
     # Download the audio file
-    audio_path = os.path.join("user-audio", f"{file_id}.mp3")
+    audio_path = os.path.join(user_directory, f"{file_id}.mp3")
     audio_file = bot.download_file(file_info.file_path)
 
     with open(audio_path, "wb") as file:
@@ -59,18 +70,22 @@ def handle_audio(message):
     # Cleanup: delete the original file
     os.remove(audio_path)
 
-    # Log info of file
-    logger.info("Received audio file:")
-    logger.info(f" * File ID: {file_id}")
-    logger.info(f" * duration: {duration} seconds")
-
+    # Send Message that the audio is being transcripted
     bot.send_message(
         message.chat.id,
-        f"Recieved audio file. Duration: {duration} seconds"
+        f"صدا رسید. طول صدا: {duration} ثانیه. \n در حال تبدیل به نوشته ..."
     )
-
     logger.info(f"Transcribing {converted_audio_path} ...")
+
+    # transcribing using the model
     os.popen("python vosk-server/transcriber.py " + converted_audio_path)
+
+
+    transcription_file_path = converted_audio_path[:-(len("wav")+1)]  + "_transcription.txt"
+    with open(transcription_file_path, "rb") as transcription_file:
+        bot.send_document(message.chat.id, transcription_file,
+                           filename="transcription.txt", reply_to_message_id=message.message_id)
+
 
 
 
