@@ -29,7 +29,7 @@ jobs:
       - name: Download and Unzip Model
         run: |
           cd vosk-server/websocket/models/
-          wget 1Dvk4Cj_IK5O7OseWPjMSplU70C8KW9XD
+          gdown 1Dvk4Cj_IK5O7OseWPjMSplU70C8KW9XD
           unzip vosk-model-small-fa-0.5
 
       - name: Run ASR Server
