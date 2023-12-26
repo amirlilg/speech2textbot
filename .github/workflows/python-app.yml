@@ -46,6 +46,10 @@ jobs:
           done
 
       - name: Run Bot
-        run: python bot2.py
         env:
           BOT_TOKEN: ${{ env.BOT_TOKEN }}
+        run: |
+          (python bot2.py &)
+          sleep 5
+          kill -TERM $(pgrep -f "python bot2.py") || true
+          echo "successfully terminated bot2.py's run"
