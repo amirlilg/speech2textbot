@@ -4,3 +4,4 @@ websockets==12.0
 vosk==0.3.45
 gdown
 psutil
+ffmpeg
