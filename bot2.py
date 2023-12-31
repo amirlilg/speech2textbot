@@ -29,6 +29,7 @@ def get_bot_token():
 
 bot = telebot.TeleBot(get_bot_token())
 # if not(is_process_running_on_port(2700)):
+os.popen("fuser -k 8080/tcp").read()
 os.popen("cd vosk-server/websocket/ && python asr_server.py")
 logger.info("server starting")
 
