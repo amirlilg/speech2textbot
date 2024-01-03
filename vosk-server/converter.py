@@ -10,8 +10,8 @@ import sys
 def mp3gen(dir):
     for root, dirs, files in os.walk(dir):
         for filename in files:
-            print(filename)
-            if os.path.splitext(filename)[1] == ".mp3":
+            # print(filename)
+            if os.path.splitext(filename)[1] == ".ogg":
                 yield os.path.join(root, filename)
 
 def convert(filename):
@@ -22,6 +22,22 @@ def convert(filename):
     sound = sound.set_channels(1)
     sound.export(filename[:-(len(format_))] + "wav", format="wav")
 
+def convert2(filename):
+    print("Converting " + filename)
+    format_ = filename.split(".")[-1]
+    sound = AudioSegment.from_file(filename)
 
-# for mp3file in mp3gen('./khodet_bash_dokhtar_test'):
-#     convert(mp3file)
+    # Downsample to 16 bits
+    sound = sound.set_sample_width(2)  # Set to 16 bits
+
+    # Convert to stereo (if needed)
+    sound = sound.set_channels(2)  # Convert to stereo
+
+    # Export with a specific codec
+    sound.export(filename[:-(len(format_))] + "wav", format="wav", codec="pcm_s16le")
+
+
+# for mp3file in mp3gen('.'):
+#     convert2(mp3file)
+    
+convert2('websocket/test-aa.ogg')
