@@ -1,28 +1,36 @@
 from pydub import AudioSegment
 from pydub.silence import split_on_silence
+import os
 
 
-base_adr = "/workspaces/vosk-server/websocket/myproject/"
-audio_ = "Hagh.wav"
+def segment_audio(file):
+    audio = AudioSegment.from_file(file)
 
-audio = AudioSegment.from_wav(base_adr + audio_)
+    # Set silence threshold and minimum silence duration
 
-# Set silence threshold and minimum silence duration
+    # Use min_silence_len to control the minimum duration of silence
+    chunks = split_on_silence(
+        audio,
 
-# Use min_silence_len to control the minimum duration of silence
-chunks = split_on_silence(
-    audio,
+        # split on silences longer than 1000ms (1 sec)
+        min_silence_len=700,
 
-    # split on silences longer than 1000ms (1 sec)
-    min_silence_len=700,
+        # anything under -silence_thresh dBFS is considered silence
+        silence_thresh=-40, 
 
-    # anything under -silence_thresh dBFS is considered silence
-    silence_thresh=-40, 
+        # keep 200 ms of leading/trailing silence
+        keep_silence=200
+    )
 
-    # keep 200 ms of leading/trailing silence
-    keep_silence=200
-)
+    audio_name, audio_extension = os.path.splitext(file)
+    audio_name = audio_name.split("/")[-1]
+    print(audio_name, audio_extension)
 
-for i, part in enumerate(chunks):
-    print(i)
-    part.export(f"{base_adr}{audio_[:-4]}/interview_part_{i + 1}.wav", format="wav")
+    if not os.path.exists(file[:-len(audio_extension)] + "/"):
+        os.makedirs(file[:-len(audio_extension)] + "/")
+
+    for i, part in enumerate(chunks):
+        print(i)
+        part.export(f"{file[:-len(audio_extension)]}/{audio_name}_part_{i + 1}.wav", format="wav")
+
+# segment_audio("09150239232_SB_2.mp3")
