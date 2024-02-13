@@ -28,13 +28,13 @@ jobs:
 
       - name: Download and Unzip Model
         run: |
-          cd vosk-server/websocket_/models/
+          cd vosk_server/websocket_/models/
           gdown 1Dvk4Cj_IK5O7OseWPjMSplU70C8KW9XD
           unzip vosk-model-small-fa-0.5
 
       - name: Run ASR Server
         run: |
-          cd vosk-server/websocket_/
+          cd vosk_server/websocket_/
           python asr_server.py &
           echo "ASR Server is running in the background."
 
