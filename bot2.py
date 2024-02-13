@@ -32,7 +32,7 @@ def get_bot_token():
 bot = telebot.TeleBot(get_bot_token())
 # if not(is_process_running_on_port(2700)):
 os.popen("fuser -k 2700/tcp").read()
-os.popen("cd vosk_server/websocket/ && python asr_server.py")
+os.popen("cd vosk_server/websocket_/ && python asr_server.py")
 logger.info("server starting")
 
 def convert(filename):
@@ -116,9 +116,12 @@ def handle_audio(message):
     logger.info(f"└Transcribing {audio_path} ...")
 
     # transcribing using the model
-    temp = os.popen("python vosk_server/transcriber_ffmpeg.py " + audio_path).read()
+    temp = transcriber_ffmpeg.transcribe_long_file(audio_path)
+    # temp = os.popen("python vosk_server/transcriber_ffmpeg.py " + audio_path).read() #change, to call function in transcriber pythonic.
 
-    transcription_file_path = audio_path[:-(len("wav")+1)] + "_transcription.txt"
+    audio_extension = os.path.splitext(audio_path)[-1]
+
+    transcription_file_path = audio_path[:-(len(audio_extension))] + "_transcription.txt"
     with open(transcription_file_path, "rb") as transcription_file:
         bot.send_document(message.chat.id, transcription_file,
                            visible_file_name="متن.txt", reply_to_message_id=message.message_id)

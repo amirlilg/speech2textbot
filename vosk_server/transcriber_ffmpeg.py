@@ -1,8 +1,10 @@
 import re, os
 import asyncio
 import shutil
-from .websocket import test_ffmpeg
-from . import segmentation
+import segmentation
+
+from websocket_ import test_ffmpeg
+
 
 def split_string(s):
     return [int(text) if text.isdigit() else text.lower()
@@ -60,8 +62,7 @@ def transcribe_long_file(file):
 
 # transcribe_long_file("/workspaces/speech2textbot/vosk-server/websocket/test-aa.wav")
 
-x
-    
+
 
 # transcribe('websocket/test-aa.ogg')
 
