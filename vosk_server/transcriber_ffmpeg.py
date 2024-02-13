@@ -1,8 +1,8 @@
 import re, os
 import asyncio
 import shutil
-import segmentation
 
+import segmentation
 from websocket_ import test_ffmpeg
 
 
@@ -45,7 +45,7 @@ def transcribe_long_file(file):
     filenames_sorted = sorted(filenames, key=split_string)
     print("number of files: ", len(filenames_sorted))
     for filename in filenames_sorted:
-        print("transcribing " + filename)
+        # print("transcribing " + filename)
         full_transcription += transcribe(filename) + " "
 
     #write the transcription
