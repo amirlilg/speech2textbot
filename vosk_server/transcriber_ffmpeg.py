@@ -1,7 +1,8 @@
-import re, sys, os
+import re, os
 import asyncio
-from websocket import test_ffmpeg
-import segmentation
+import shutil
+from .websocket import test_ffmpeg
+from . import segmentation
 
 def split_string(s):
     return [int(text) if text.isdigit() else text.lower()
@@ -40,17 +41,26 @@ def transcribe_long_file(file):
                 filenames.append(os.path.join(root, filename))
     # print("2")
     filenames_sorted = sorted(filenames, key=split_string)
-    # print("filenames_sorted: " + str(filenames_sorted))
+    print("number of files: ", len(filenames_sorted))
     for filename in filenames_sorted:
         print("transcribing " + filename)
         full_transcription += transcribe(filename) + " "
 
+    #write the transcription
     with open(file[:-(len(audio_extension))] + "_transcription.txt", "w") as text_file:
         text_file.write(full_transcription)
 
-transcribe_long_file("/workspaces/speech2textbot/vosk-server/09150239232_SB_2.mp3")
+    #delete the folder with sub-audios
+    try:
+        shutil.rmtree(file[:-len(audio_extension)] + "/")
+    except Exception as e:
+        print(f'Failed to delete directory: {e}')
+    
 
 
+# transcribe_long_file("/workspaces/speech2textbot/vosk-server/websocket/test-aa.wav")
+
+x
     
 
 # transcribe('websocket/test-aa.ogg')
@@ -68,3 +78,4 @@ transcribe_long_file("/workspaces/speech2textbot/vosk-server/09150239232_SB_2.mp
 
 # with open(sys.argv[1][:-(len(format_)+1)] + "_transcription.txt", "w") as text_file:
 #     text_file.write(transcription)
+# print("hi")

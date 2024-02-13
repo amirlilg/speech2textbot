@@ -7,8 +7,8 @@ model
 *.m4a
 *.mp3
 venv*
-vosk-server/websocket/models/vosk-*
-vosk-server/09*
+vosk_server/websocket/models/vosk-*
+vosk_server/09*
 bottoken.txt
 user-audio/*
 

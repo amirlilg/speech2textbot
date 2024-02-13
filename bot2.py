@@ -4,6 +4,8 @@ import logging
 from pydub import AudioSegment
 import psutil
 
+from vosk_server import transcriber_ffmpeg
+
 # Enable logging
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -30,7 +32,7 @@ def get_bot_token():
 bot = telebot.TeleBot(get_bot_token())
 # if not(is_process_running_on_port(2700)):
 os.popen("fuser -k 2700/tcp").read()
-os.popen("cd vosk-server/websocket/ && python asr_server.py")
+os.popen("cd vosk_server/websocket/ && python asr_server.py")
 logger.info("server starting")
 
 def convert(filename):
@@ -60,7 +62,7 @@ def handle_help(message):
 def process_audio_message(message):
     audio = message.audio if message.audio else message.voice
     file_id = audio.file_id
-    file_extension = audio.mime_type.split("/")[-1]  # Infer file extension from MIME type
+    file_extension = audio.mime_type.split("/")[-1] 
     file_info = bot.get_file(file_id)
 
     # Log info of file
@@ -114,7 +116,7 @@ def handle_audio(message):
     logger.info(f"└Transcribing {audio_path} ...")
 
     # transcribing using the model
-    temp = os.popen("python vosk-server/transcriber_ffmpeg.py " + audio_path).read()
+    temp = os.popen("python vosk_server/transcriber_ffmpeg.py " + audio_path).read()
 
     transcription_file_path = audio_path[:-(len("wav")+1)] + "_transcription.txt"
     with open(transcription_file_path, "rb") as transcription_file:
