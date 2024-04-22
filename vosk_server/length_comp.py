@@ -9,10 +9,10 @@ def split_string(s):
             for text in re.split('([0-9]+)', s)]
 
 def wavfinder():
-    for root, dirs, files in os.walk('./09150239232_SB_2/'):
+    for root, dirs, files in os.walk('./local_files/Mo_ama_taa/'):
         for filename in files:
             if os.path.splitext(filename)[1] == ".wav" and "_part_" in filename:
-                print(os.path.join(root, filename))
+                # print(os.path.join(root, filename))
                 yield os.path.join(root, filename)
 
 filelist = []
@@ -24,7 +24,7 @@ filelist_ = sorted(filelist, key=split_string)
 
 
 duration_parts = 0
-duration_01 = librosa.get_duration(filename='09150239232_SB_2.mp3')
+duration_01 = librosa.get_duration(filename='./local_files/Mo_ama_taa.m4a')
 
 for wavfile in filelist_:
     duration_parts += librosa.get_duration(filename=wavfile)

@@ -2,7 +2,7 @@ import re, os
 import asyncio
 import shutil
 
-import segmentation
+from segmentation import segment_audio
 from websocket_ import test_ffmpeg
 
 
@@ -12,7 +12,6 @@ def split_string(s):
 
 def transcribe(file):
     # output = os.popen("python websocket/test_ffmpeg.py " + sys.argv[1]).read()
-    
     output = asyncio.run(test_ffmpeg.run_test_with_file('ws://localhost:2700', file))
     # print("output type: ", type(output))
     # print("output len : ", len(output))
@@ -31,22 +30,25 @@ def transcribe(file):
 
 def transcribe_long_file(file):
     full_transcription = ""
-    segmentation.segment_audio(file)
+    segment_audio(file)
     full_path_audio_name, audio_extension = os.path.splitext(file)
     # audio_name = full_path_audio_name.split("/")[-1]
     
-    # print("1")
+    #segmenting audio
     filenames = []
     for root, dirs, files in os.walk(file[:-len(audio_extension)] + "/"):
         for filename in files:
             if os.path.splitext(filename)[1] == ".wav" and "_part_" in filename:
                 filenames.append(os.path.join(root, filename))
-    # print("2")
+    
+    #transcribing audio
     filenames_sorted = sorted(filenames, key=split_string)
     print("number of files: ", len(filenames_sorted))
-    for filename in filenames_sorted:
+    for i in range(len(filenames_sorted)):
         # print("transcribing " + filename)
-        full_transcription += transcribe(filename) + " "
+        if i%100==0:
+            print("transcribing:", i, "/", len(filenames_sorted))
+        full_transcription += transcribe(filenames_sorted[i])
 
     #write the transcription
     with open(file[:-(len(audio_extension))] + "_transcription.txt", "w") as text_file:
@@ -58,9 +60,11 @@ def transcribe_long_file(file):
     except Exception as e:
         print(f'Failed to delete directory: {e}')
     
+    return full_transcription
 
 
-# transcribe_long_file("/workspaces/speech2textbot/vosk-server/websocket/test-aa.wav")
+if __name__ == '__main__':# test (run as main file)
+    transcribe_long_file("/workspaces/speech2textbot/vosk_server/websocket_/test-aa.ogg")
 
 
 

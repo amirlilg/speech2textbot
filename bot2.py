@@ -50,7 +50,8 @@ def handle_start(message):
     help_text = file.read()
     file.close()
     logger.info(f"User {user.id}: start")
-    bot.send_message(message.chat.id, f"سلام {user.first_name}!\n + help_text")
+    
+    bot.send_message(message.chat.id, f"سلام {user.first_name}!\n{help_text}")
 
 @bot.message_handler(commands=['help'])
 def handle_help(message):
@@ -111,17 +112,26 @@ def handle_audio(message):
     # Send Message that the audio/voice message is being processed
     bot.send_message(
         message.chat.id,
-        f"صوت رسید. طول مدت: {duration} ثانیه. \n در حال تبدیل به نوشته ..."
+        f"صوت رسید. طول مدت: {duration} ثانیه. \n در حال تبدیل به نوشته ...",
+        reply_to_message_id=message.message_id
     )
     logger.info(f"└Transcribing {audio_path} ...")
 
     # transcribing using the model
-    temp = transcriber_ffmpeg.transcribe_long_file(audio_path)
+    full_transcription = transcriber_ffmpeg.transcribe_long_file(audio_path)
     # temp = os.popen("python vosk_server/transcriber_ffmpeg.py " + audio_path).read() #change, to call function in transcriber pythonic.
 
     audio_extension = os.path.splitext(audio_path)[-1]
 
     transcription_file_path = audio_path[:-(len(audio_extension))] + "_transcription.txt"
+    
+    if len(full_transcription < 4000):
+        bot.send_message(
+            message.chat.id,
+            full_transcription,
+            reply_to_message_id=message.message_id
+        )
+
     with open(transcription_file_path, "rb") as transcription_file:
         bot.send_document(message.chat.id, transcription_file,
                            visible_file_name="متن.txt", reply_to_message_id=message.message_id)

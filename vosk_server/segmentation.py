@@ -12,13 +12,13 @@ def segment_audio(file):
     chunks = split_on_silence(
         audio,
 
-        # split on silences longer than 1000ms (1 sec)
+        # split on silences longer than min_silence_len (in milisec)
         min_silence_len=700,
 
         # anything under -silence_thresh dBFS is considered silence
         silence_thresh=-40, 
 
-        # keep 200 ms of leading/trailing silence
+        # keep keep_silence ms of leading/trailing silence
         keep_silence=200
     )
 
@@ -30,7 +30,9 @@ def segment_audio(file):
         os.makedirs(file[:-len(audio_extension)] + "/")
 
     for i, part in enumerate(chunks):
-        # print(i)
+        if i%100==0:
+            print("segmenting:", i, "/", len(chunks))
         part.export(f"{file[:-len(audio_extension)]}/{audio_name}_part_{i + 1}.wav", format="wav")
 
-# segment_audio("09150239232_SB_2.mp3")
+if __name__ == '__main__':
+    segment_audio("/workspaces/speech2textbot/vosk_server/local_files/09903034574_1_1707289710656.mp3")

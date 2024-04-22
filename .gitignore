@@ -2,13 +2,12 @@ __pycache__
 *.pyc
 *.tar.gz
 *pb2*.py
-model
 *.zip
 *.m4a
 *.mp3
 venv*
 vosk_server/websocket_/models/vosk-*
-vosk_server/09*
+vosk_server/local_files/
 bottoken.txt
 user-audio/*
 
