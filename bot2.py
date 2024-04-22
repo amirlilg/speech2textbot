@@ -125,7 +125,7 @@ def handle_audio(message):
 
     transcription_file_path = audio_path[:-(len(audio_extension))] + "_transcription.txt"
     
-    if len(full_transcription < 4000):
+    if len(full_transcription) < 4000:
         bot.send_message(
             message.chat.id,
             full_transcription,
